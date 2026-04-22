@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nestville Apartments — Solwezi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ─── CSS Variables ─────────────────────────────────────── */
+    :root {
+      --bg:        #f5f0eb;
+      --bg2:       #ede7df;
+      --surface:   #ffffff;
+      --text:      #2a2018;
+      --text2:     #7a6a58;
+      --accent:    #b89a7a;
+      --accent2:   #8c6f52;
+      --border:    rgba(0,0,0,0.08);
+      --hero-tint: rgba(42,32,24,0.35);
+      --shadow:    0 8px 40px rgba(100,70,40,0.12);
+      --nav-bg:    rgba(245,240,235,0.85);
+    }
+    [data-theme="dark"] {
+      --bg:        #1a1510;
+      --bg2:       #231e18;
+      --surface:   #2c2520;
+      --text:      #f0e8df;
+      --text2:     #a89880;
+      --accent:    #c8a882;
+      --accent2:   #e0c4a0;
+      --border:    rgba(255,255,255,0.08);
+      --hero-tint: rgba(10,8,5,0.55);
+      --shadow:    0 8px 40px rgba(0,0,0,0.4);
+      --nav-bg:    rgba(26,21,16,0.9);
+    }
+
+    /* ─── Reset & Base ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background .4s, color .4s;
+      overflow-x: hidden;
+    }
+
+    /* ─── Nav ───────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: background .4s, border-color .4s;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem; font-weight: 400; letter-spacing: .12em;
+      color: var(--text); text-transform: uppercase; text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 36px; align-items: center; }
+    .nav-links a {
+      font-size: .75rem; font-weight: 400; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--text2); text-decoration: none;
+      transition: color .25s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ─── Sun/Moon Toggle ───────────────────────────────────── */
+    .theme-toggle {
+      position: relative; width: 54px; height: 28px;
+      cursor: pointer; background: none; border: none;
+      display: flex; align-items: center;
+    }
+    .toggle-track {
+      width: 54px; height: 28px; border-radius: 14px;
+      background: var(--bg2); border: 1.5px solid var(--border);
+      position: relative; transition: background .4s;
+      overflow: hidden;
+    }
+    .toggle-thumb {
+      position: absolute; top: 3px; left: 3px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--accent);
+      transition: transform .4s cubic-bezier(.68,-.55,.27,1.55), background .4s;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+    [data-theme="dark"] .toggle-thumb { transform: translateX(26px); background: #f5c842; }
+
+    /* Animated sun rays */
+    .sun-icon {
+      width: 14px; height: 14px; position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sun-core {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #fff; transition: background .4s;
+    }
+    [data-theme="dark"] .sun-core { background: #1a1510; }
+    .sun-ray {
+      position: absolute; width: 2px; height: 4px; background: #fff;
+      border-radius: 1px; transform-origin: 50% 8px;
+      animation: spin-ray 8s linear infinite;
+      transition: background .4s;
+    }
+    [data-theme="dark"] .sun-ray { background: #1a1510; }
+    .sun-ray:nth-child(2) { transform: rotate(45deg); }
+    .sun-ray:nth-child(3) { transform: rotate(90deg); }
+    .sun-ray:nth-child(4) { transform: rotate(135deg); }
+    .sun-ray:nth-child(5) { transform: rotate(180deg); }
+    .sun-ray:nth-child(6) { transform: rotate(225deg); }
+    .sun-ray:nth-child(7) { transform: rotate(270deg); }
+    .sun-ray:nth-child(8) { transform: rotate(315deg); }
+    @keyframes spin-ray { to { transform: rotate(calc(var(--r,0deg) + 360deg)); } }
+    .sun-ray:nth-child(2) { --r: 45deg; }
+    .sun-ray:nth-child(3) { --r: 90deg; }
+    .sun-ray:nth-child(4) { --r: 135deg; }
+    .sun-ray:nth-child(5) { --r: 180deg; }
+    .sun-ray:nth-child(6) { --r: 225deg; }
+    .sun-ray:nth-child(7) { --r: 270deg; }
+    .sun-ray:nth-child(8) { --r: 315deg; }
+
+    /* ─── Hero ──────────────────────────────────────────────── */
+    .hero {
+      height: 100vh; min-height: 600px;
+      background: linear-gradient(var(--hero-tint), var(--hero-tint)),
+                  url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1800&q=80') center/cover no-repeat;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; position: relative;
+      transition: background .4s;
+    }
+    .hero-eyebrow {
+      font-size: .68rem; letter-spacing: .35em; text-transform: uppercase;
+      color: rgba(255,255,255,.6); margin-bottom: 20px;
+      animation: fadeUp .9s .2s both;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 8vw, 7rem); font-weight: 300; line-height: 1.05;
+      color: #fff; letter-spacing: .02em;
+      animation: fadeUp .9s .4s both;
+    }
+    .hero-title em { font-style: italic; }
+    .hero-sub {
+      margin-top: 20px; font-size: .85rem; letter-spacing: .22em;
+      text-transform: uppercase; color: rgba(255,255,255,.55);
+      animation: fadeUp .9s .6s both;
+    }
+    .hero-cta {
+      margin-top: 48px; display: flex; gap: 16px;
+      animation: fadeUp .9s .8s both;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff; border: none;
+      padding: 14px 36px; font-family: 'Jost', sans-serif;
+      font-size: .75rem; letter-spacing: .2em; text-transform: uppercase;
+      cursor: pointer; border-radius: 2px;
+      transition: background .25s, transform .2s;
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent; color: #fff;
+      border: 1px solid rgba(255,255,255,.5);
+      padding: 14px 36px; font-family: 'Jost', sans-serif;
+      font-size: .75rem; letter-spacing: .2em; text-transform: uppercase;
+      cursor: pointer; border-radius: 2px;
+      transition: border-color .25s, transform .2s;
+    }
+    .btn-outline:hover { border-color: #fff; transform: translateY(-2px); }
+    .hero-scroll {
+      position: absolute; bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: rgba(255,255,255,.45); font-size: .65rem; letter-spacing: .3em;
+      text-transform: uppercase; animation: fadeUp .9s 1s both;
+    }
+    .scroll-line {
+      width: 1px; height: 50px; background: rgba(255,255,255,.3);
+      position: relative; overflow: hidden;
+    }
+    .scroll-line::after {
+      content: ''; position: absolute; top: -100%; left: 0;
+      width: 100%; height: 100%; background: rgba(255,255,255,.7);
+      animation: scrollDrop 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollDrop { to { top: 200%; } }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Stats Bar ─────────────────────────────────────────── */
+    .stats-bar {
+      background: var(--surface); display: flex;
+      justify-content: center; flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      transition: background .4s;
+    }
+    .stat {
+      padding: 32px 56px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem; font-weight: 300; color: var(--accent);
+    }
+    .stat-label {
+      font-size: .68rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--text2); margin-top: 4px;
+    }
+
+    /* ─── Philosophy / About ────────────────────────────────── */
+    .philosophy {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; max-width: 1200px; margin: 100px auto;
+      padding: 0 40px;
+    }
+    .philosophy-text { padding-right: 80px; display: flex; flex-direction: column; justify-content: center; }
+    .section-eyebrow {
+      font-size: .65rem; letter-spacing: .35em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; line-height: 1.2;
+      color: var(--text); margin-bottom: 24px;
+    }
+    .section-body {
+      font-size: .9rem; line-height: 1.8; color: var(--text2);
+      font-weight: 300; margin-bottom: 32px;
+    }
+    .link-arrow {
+      font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--accent); text-decoration: none; display: inline-flex;
+      align-items: center; gap: 10px; transition: gap .25s;
+    }
+    .link-arrow:hover { gap: 18px; }
+    .philosophy-image {
+      position: relative; overflow: hidden; border-radius: 2px;
+      height: 480px;
+    }
+    .philosophy-image img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .6s ease;
+    }
+    .philosophy-image:hover img { transform: scale(1.04); }
+
+    /* ─── Amenities ─────────────────────────────────────────── */
+    .amenities-section { background: var(--bg2); padding: 100px 40px; transition: background .4s; }
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .amenities-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2px; max-width: 1200px; margin: 0 auto;
+    }
+    .amenity-card {
+      background: var(--surface); padding: 48px 40px;
+      transition: background .4s, transform .3s;
+      position: relative; overflow: hidden;
+    }
+    .amenity-card::before {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 2px; background: var(--accent);
+      transition: width .4s;
+    }
+    .amenity-card:hover::before { width: 100%; }
+    .amenity-card:hover { transform: translateY(-4px); }
+    .amenity-icon { font-size: 2rem; margin-bottom: 20px; }
+    .amenity-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 400; color: var(--text); margin-bottom: 12px;
+    }
+    .amenity-desc { font-size: .82rem; color: var(--text2); line-height: 1.7; font-weight: 300; }
+
+    /* ─── Gallery / Projects ────────────────────────────────── */
+    .gallery-section { padding: 100px 40px; }
+    .gallery-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      max-width: 1200px; margin: 0 auto 48px;
+    }
+    .gallery-nav { display: flex; gap: 12px; }
+    .gallery-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .25s, color .25s;
+    }
+    .gallery-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .gallery-track-wrapper {
+      max-width: 1200px; margin: 0 auto; overflow: hidden; border-radius: 2px;
+    }
+    .gallery-track {
+      display: flex; gap: 20px;
+      transition: transform .5s cubic-bezier(.25,.46,.45,.94);
+    }
+    .gallery-item {
+      flex: 0 0 calc(33.333% - 14px); position: relative;
+      overflow: hidden; border-radius: 2px; aspect-ratio: 4/3;
+      cursor: pointer;
+    }
+    .gallery-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .6s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.08); }
+    .gallery-item-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,.6));
+      padding: 30px 20px 16px;
+      font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(255,255,255,.8);
+    }
+
+    /* ─── Process ───────────────────────────────────────────── */
+    .process-section { background: var(--bg2); padding: 100px 40px; transition: background .4s; }
+    .process-steps {
+      display: flex; align-items: flex-start; gap: 0;
+      max-width: 1000px; margin: 0 auto; position: relative;
+    }
+    .process-steps::before {
+      content: ''; position: absolute; top: 28px; left: 80px; right: 80px;
+      height: 1px; background: var(--border);
+    }
+    .process-step { flex: 1; text-align: center; padding: 0 20px; }
+    .step-num {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 1px solid var(--accent); background: var(--surface);
+      font-family: 'Cormorant Garamond', serif; font-size: 1.2rem;
+      color: var(--accent); display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 24px;
+      position: relative; z-index: 1; transition: background .3s;
+    }
+    .process-step:hover .step-num { background: var(--accent); color: #fff; }
+    .step-title {
+      font-size: .78rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--text); margin-bottom: 10px;
+    }
+    .step-desc { font-size: .82rem; color: var(--text2); line-height: 1.7; font-weight: 300; }
+
+    /* ─── Testimonials ──────────────────────────────────────── */
+    .testimonials { padding: 100px 40px; text-align: center; }
+    .testimonials-track {
+      max-width: 720px; margin: 48px auto 0;
+      position: relative; overflow: hidden; min-height: 140px;
+    }
+    .testimonial {
+      position: absolute; top: 0; left: 0; right: 0;
+      opacity: 0; transition: opacity .6s, transform .6s;
+      transform: translateY(20px);
+    }
+    .testimonial.active { opacity: 1; transform: translateY(0); }
+    .testimonial-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.2rem, 2.5vw, 1.7rem); font-weight: 300; font-style: italic;
+      color: var(--text); line-height: 1.5; margin-bottom: 24px;
+    }
+    .testimonial-author {
+      font-size: .7rem; letter-spacing: .25em; text-transform: uppercase; color: var(--text2);
+    }
+    .testimonial-dots { display: flex; justify-content: center; gap: 8px; margin-top: 36px; }
+    .t-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--border); border: 1px solid var(--accent);
+      cursor: pointer; transition: background .25s;
+    }
+    .t-dot.active { background: var(--accent); }
+
+    /* ─── Contact ───────────────────────────────────────────── */
+    .contact-section {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      max-width: 1200px; margin: 100px auto; padding: 0 40px;
+    }
+    .contact-info { padding-right: 80px; }
+    .contact-detail { display: flex; gap: 16px; margin-bottom: 28px; align-items: flex-start; }
+    .contact-icon { font-size: 1.2rem; margin-top: 2px; }
+    .contact-detail-text h4 {
+      font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 4px;
+    }
+    .contact-detail-text p { font-size: .9rem; color: var(--text2); font-weight: 300; }
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-field {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .form-field label {
+      font-size: .65rem; letter-spacing: .25em; text-transform: uppercase; color: var(--text2);
+    }
+    .form-field input, .form-field textarea, .form-field select {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); padding: 12px 16px; font-family: 'Jost', sans-serif;
+      font-size: .85rem; font-weight: 300; border-radius: 2px;
+      transition: border-color .25s, background .4s;
+      outline: none;
+    }
+    .form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+      border-color: var(--accent);
+    }
+    .form-field textarea { resize: vertical; min-height: 100px; }
+    .form-field select option { background: var(--surface); }
+    .submit-btn {
+      background: var(--accent); color: #fff; border: none;
+      padding: 16px 48px; font-family: 'Jost', sans-serif;
+      font-size: .75rem; letter-spacing: .2em; text-transform: uppercase;
+      cursor: pointer; border-radius: 2px; align-self: flex-start;
+      transition: background .25s, transform .2s;
+    }
+    .submit-btn:hover { background: var(--accent2); transform: translateY(-2px); }
+
+    /* ─── Newsletter ────────────────────────────────────────── */
+    .newsletter {
+      background: var(--text); color: var(--bg);
+      text-align: center; padding: 72px 40px;
+    }
+    .newsletter h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 300; margin-bottom: 8px;
+    }
+    .newsletter p { font-size: .82rem; opacity: .6; margin-bottom: 32px; letter-spacing: .1em; }
+    .newsletter-form { display: flex; gap: 0; max-width: 480px; margin: 0 auto; }
+    .newsletter-form input {
+      flex: 1; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2);
+      border-right: none; color: var(--bg); padding: 14px 20px;
+      font-family: 'Jost', sans-serif; font-size: .82rem; outline: none;
+      border-radius: 2px 0 0 2px;
+    }
+    .newsletter-form input::placeholder { color: rgba(255,255,255,.35); }
+    .newsletter-form button {
+      background: var(--accent); color: #fff; border: none;
+      padding: 14px 28px; font-family: 'Jost', sans-serif;
+      font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
+      cursor: pointer; border-radius: 0 2px 2px 0;
+      transition: background .25s;
+    }
+    .newsletter-form button:hover { background: var(--accent2); }
+
+    /* ─── Footer ────────────────────────────────────────────── */
+    footer {
+      background: var(--bg2); border-top: 1px solid var(--border);
+      padding: 64px 40px 32px; transition: background .4s;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; max-width: 1200px; margin: 0 auto 48px;
+    }
+    .footer-brand h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 400; margin-bottom: 12px; color: var(--text);
+    }
+    .footer-brand p { font-size: .82rem; color: var(--text2); line-height: 1.7; font-weight: 300; }
+    .footer-col h4 {
+      font-size: .65rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+    }
+    .footer-col a {
+      display: block; font-size: .82rem; color: var(--text2);
+      text-decoration: none; margin-bottom: 10px; font-weight: 300;
+      transition: color .25s;
+    }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid var(--border); padding-top: 28px;
+      font-size: .72rem; color: var(--text2);
+    }
+    .social-links { display: flex; gap: 16px; }
+    .social-links a {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border); display: flex; align-items: center;
+      justify-content: center; color: var(--text2); text-decoration: none;
+      font-size: .8rem; transition: border-color .25s, color .25s;
+    }
+    .social-links a:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── Lightbox ──────────────────────────────────────────── */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.9); align-items: center; justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 2px; }
+    .lightbox-close {
+      position: absolute; top: 24px; right: 32px;
+      background: none; border: none; color: #fff; font-size: 2rem;
+      cursor: pointer; opacity: .7; transition: opacity .2s;
+    }
+    .lightbox-close:hover { opacity: 1; }
+
+    /* ─── Responsive ────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .philosophy, .contact-section { grid-template-columns: 1fr; }
+      .philosophy-text { padding-right: 0; margin-bottom: 40px; }
+      .contact-info { padding-right: 0; margin-bottom: 40px; }
+      .amenities-grid { grid-template-columns: 1fr; }
+      .gallery-item { flex: 0 0 calc(80% - 10px); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .process-steps { flex-direction: column; align-items: center; }
+      .process-steps::before { display: none; }
+      .stat { padding: 24px 28px; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .nav-links { gap: 18px; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────────── -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Nestville</a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#amenities">Amenities</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#contact">Contact</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <div class="toggle-track">
+        <div class="toggle-thumb">
+          <div class="sun-icon">
+            <div class="sun-core"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+          </div>
+        </div>
+      </div>
+    </button>
+  </div>
+</nav>
+
+<!-- ── Hero ───────────────────────────────────────────────── -->
+<div class="hero" id="home">
+  <p class="hero-eyebrow">Solwezi, Zambia &nbsp;·&nbsp; Luxury Furnished Living</p>
+  <h1 class="hero-title">Your Home<br><em>Away From</em><br>Home</h1>
+  <p class="hero-sub">Modern · Furnished · Peaceful</p>
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Book a Stay</button>
+    <button class="btn-outline" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">View Gallery</button>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<!-- ── Stats Bar ──────────────────────────────────────────── -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-number">12+</div><div class="stat-label">Furnished Units</div></div>
+  <div class="stat"><div class="stat-number">5★</div><div class="stat-label">Guest Rating</div></div>
+  <div class="stat"><div class="stat-number">8yr</div><div class="stat-label">In Solwezi</div></div>
+  <div class="stat"><div class="stat-number">24/7</div><div class="stat-label">Concierge</div></div>
+</div>
+
+<!-- ── About / Philosophy ─────────────────────────────────── -->
+<div class="philosophy" id="about">
+  <div class="philosophy-text">
+    <p class="section-eyebrow">Our Philosophy</p>
+    <h2 class="section-title">Refined Living in the<br>Heart of Solwezi</h2>
+    <p class="section-body">
+      Nestville Apartments was designed for those who refuse to compromise on comfort, 
+      even when far from home. Every unit is thoughtfully furnished, blending warm 
+      African aesthetics with modern convenience — a sanctuary for business travellers, 
+      families, and extended stays.
+    </p>
+    <p class="section-body">
+      Situated on Kabitaka Road, we are minutes from Solwezi's central business district, 
+      surrounded by lush greenery yet fully connected to the city.
+    </p>
+    <a href="#contact" class="link-arrow">Enquire About Availability &nbsp;→</a>
+  </div>
+  <div class="philosophy-image">
+    <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=900&q=80" alt="Interior">
+  </div>
+</div>
+
+<!-- ── Amenities ──────────────────────────────────────────── -->
+<div class="amenities-section" id="amenities">
+  <div class="section-header">
+    <p class="section-eyebrow">What We Offer</p>
+    <h2 class="section-title">Thoughtful Amenities</h2>
+  </div>
+  <div class="amenities-grid">
+    <div class="amenity-card">
+      <div class="amenity-icon">🛋️</div>
+      <div class="amenity-name">Fully Furnished</div>
+      <p class="amenity-desc">Every unit comes with quality furniture, bed linen, towels, and kitchen essentials so you arrive and simply settle in.</p>
+    </div>
+    <div class="amenity-card">
+      <div class="amenity-icon">📶</div>
+      <div class="amenity-name">High-Speed Wi-Fi</div>
+      <p class="amenity-desc">Fibre-grade internet throughout the property — stay productive, stream, or video-call without interruption.</p>
+    </div>
+    <div class="amenity-card">
+      <div class="amenity-icon">🔒</div>
+      <div class="amenity-name">24/7 Security</div>
+      <p class="amenity-desc">Gated perimeter, CCTV, and night guards ensure peace of mind around the clock.</p>
+    </div>
+    <div class="amenity-card">
+      <div class="amenity-icon">🌿</div>
+      <div class="amenity-name">Private Garden</div>
+      <p class="amenity-desc">Manicured outdoor spaces perfect for morning coffee or evening relaxation in the Zambian air.</p>
+    </div>
+    <div class="amenity-card">
+      <div class="amenity-icon">🚗</div>
+      <div class="amenity-name">Secure Parking</div>
+      <p class="amenity-desc">Off-street covered parking bays available for all guests at no additional charge.</p>
+    </div>
+    <div class="amenity-card">
+      <div class="amenity-icon">🍳</div>
+      <div class="amenity-name">Full Kitchen</div>
+      <p class="amenity-desc">Equipped kitchen with fridge, hob, microwave, and cookware — cook your own meals anytime.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Gallery ────────────────────────────────────────────── -->
+<div class="gallery-section" id="gallery">
+  <div class="gallery-header">
+    <div>
+      <p class="section-eyebrow">Selected Interiors</p>
+      <h2 class="section-title" style="margin-bottom:0">Our Spaces</h2>
+    </div>
+    <div class="gallery-nav">
+      <button class="gallery-btn" id="prevBtn">←</button>
+      <button class="gallery-btn" id="nextBtn">→</button>
+    </div>
+  </div>
+  <div class="gallery-track-wrapper">
+    <div class="gallery-track" id="galleryTrack">
+      <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&q=80')">
+        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=700&q=80" alt="Living Room">
+        <div class="gallery-item-label">Living Room</div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=80')">
+        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=700&q=80" alt="Master Bedroom">
+        <div class="gallery-item-label">Master Bedroom</div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&q=80')">
+        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80" alt="Kitchen">
+        <div class="gallery-item-label">Kitchen</div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1200&q=80')">
+        <img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=700&q=80" alt="Bathroom">
+        <div class="gallery-item-label">Bathroom</div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80')">
+        <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=700&q=80" alt="Exterior">
+        <div class="gallery-item-label">Exterior</div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80')">
+        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=700&q=80" alt="Garden View">
+        <div class="gallery-item-label">Garden View</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Process ────────────────────────────────────────────── -->
+<div class="process-section">
+  <div class="section-header">
+    <p class="section-eyebrow">How It Works</p>
+    <h2 class="section-title">Your Journey to Nestville</h2>
+  </div>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">01</div>
+      <div class="step-title">Enquire</div>
+      <p class="step-desc">Reach out via our contact form or phone to check availability for your dates.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">02</div>
+      <div class="step-title">Choose Your Unit</div>
+      <p class="step-desc">Select from our range of studio, 1- and 2-bedroom furnished apartments.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">03</div>
+      <div class="step-title">Confirm & Arrive</div>
+      <p class="step-desc">Secure your booking, then arrive to a fully prepared, welcoming space.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Testimonials ───────────────────────────────────────── -->
+<div class="testimonials">
+  <p class="section-eyebrow">Guest Reviews</p>
+  <h2 class="section-title">What Our Guests Say</h2>
+  <div class="testimonials-track" id="testimonialsTrack">
+    <div class="testimonial active">
+      <p class="testimonial-quote">"Nestville feels like a true home. Spotlessly clean, beautifully furnished, and the team was incredibly helpful throughout my three-month assignment in Solwezi."</p>
+      <p class="testimonial-author">James K. &nbsp;·&nbsp; Mining Consultant</p>
+    </div>
+    <div class="testimonial">
+      <p class="testimonial-quote">"The best accommodation in Solwezi — full stop. I've stayed in hotels across Zambia and nothing comes close to the warmth and quality of Nestville."</p>
+      <p class="testimonial-author">Thandiwe M. &nbsp;·&nbsp; NGO Programme Manager</p>
+    </div>
+    <div class="testimonial">
+      <p class="testimonial-quote">"Came for two weeks, ended up extending to two months. The garden, the kitchen, the fast Wi-Fi — everything was perfect for a long work trip."</p>
+      <p class="testimonial-author">David R. &nbsp;·&nbsp; Engineer</p>
+    </div>
+  </div>
+  <div class="testimonial-dots" id="testimDots">
+    <div class="t-dot active" onclick="goTestim(0)"></div>
+    <div class="t-dot" onclick="goTestim(1)"></div>
+    <div class="t-dot" onclick="goTestim(2)"></div>
+  </div>
+</div>
+
+<!-- ── Contact ────────────────────────────────────────────── -->
+<div class="contact-section" id="contact">
+  <div class="contact-info">
+    <p class="section-eyebrow">Get In Touch</p>
+    <h2 class="section-title">Reserve Your Stay</h2>
+    <p class="section-body">We'd love to host you. Reach out for availability, pricing, or any questions about Nestville Apartments.</p>
+    <div class="contact-detail">
+      <div class="contact-icon">📍</div>
+      <div class="contact-detail-text">
+        <h4>Address</h4>
+        <p>Kabitaka Road, Solwezi, North-Western Province, Zambia</p>
+      </div>
+    </div>
+    <div class="contact-detail">
+      <div class="contact-icon">📧</div>
+      <div class="contact-detail-text">
+        <h4>Email</h4>
+        <p>nestville.solwezi@example.com</p>
+      </div>
+    </div>
+    <div class="contact-detail">
+      <div class="contact-icon">📞</div>
+      <div class="contact-detail-text">
+        <h4>Phone / WhatsApp</h4>
+        <p>+260 97 000 0000</p>
+      </div>
+    </div>
+    <div class="contact-detail">
+      <div class="contact-icon">🕐</div>
+      <div class="contact-detail-text">
+        <h4>Office Hours</h4>
+        <p>Mon – Sat: 08:00 – 18:00 CAT</p>
+      </div>
+    </div>
+  </div>
+  <div class="contact-form" id="bookingForm">
+    <div class="form-row">
+      <div class="form-field">
+        <label>First Name</label>
+        <input type="text" placeholder="Mwamba">
+      </div>
+      <div class="form-field">
+        <label>Last Name</label>
+        <input type="text" placeholder="Banda">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Email Address</label>
+      <input type="email" placeholder="you@example.com">
+    </div>
+    <div class="form-field">
+      <label>Phone Number</label>
+      <input type="tel" placeholder="+260 9X XXX XXXX">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Check-In</label>
+        <input type="date">
+      </div>
+      <div class="form-field">
+        <label>Check-Out</label>
+        <input type="date">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Unit Type</label>
+      <select>
+        <option value="">Select a unit</option>
+        <option>Studio Apartment</option>
+        <option>1-Bedroom Apartment</option>
+        <option>2-Bedroom Apartment</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>Message</label>
+      <textarea placeholder="Any special requirements or questions…"></textarea>
+    </div>
+    <button class="submit-btn" onclick="handleBooking()">Send Enquiry</button>
+  </div>
+</div>
+
+<!-- ── Newsletter ─────────────────────────────────────────── -->
+<div class="newsletter">
+  <h2>Stay Inspired · Stay Updated</h2>
+  <p>Receive availability updates, seasonal offers, and Solwezi travel tips.</p>
+  <div class="newsletter-form">
+    <input type="email" placeholder="Your email address">
+    <button onclick="handleNewsletter()">Subscribe</button>
+  </div>
+</div>
+
+<!-- ── Footer ─────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>Nestville Apartments</h3>
+      <p>Modern furnished living in Solwezi, Zambia. Your home away from home since 2018.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#amenities">Amenities</a>
+      <a href="#gallery">Gallery</a>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="#">Short Stays</a>
+      <a href="#">Long-Term Lets</a>
+      <a href="#">Corporate Housing</a>
+      <a href="#">Airport Transfer</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="#">Kabitaka Road, Solwezi</a>
+      <a href="#">+260 97 000 0000</a>
+      <a href="#">nestville.solwezi@example.com</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Nestville Apartments · Designed with ❤️ in Solwezi</p>
+    <div class="social-links">
+      <a href="#" title="Facebook">f</a>
+      <a href="#" title="Instagram">ig</a>
+      <a href="#" title="WhatsApp">wa</a>
+      <a href="#" title="Twitter/X">𝕏</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ── Lightbox ───────────────────────────────────────────── -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="Gallery image">
+</div>
+
+<!-- ── Scripts ────────────────────────────────────────────── -->
+<script>
+  /* ── Dark / Light Mode ── */
+  const toggle = document.getElementById('themeToggle');
+  const html = document.documentElement;
+  const saved = localStorage.getItem('nestville-theme') || 'light';
+  html.setAttribute('data-theme', saved);
+
+  toggle.addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('nestville-theme', next);
+  });
+
+  /* ── Gallery Slider ── */
+  const track = document.getElementById('galleryTrack');
+  const items = track.querySelectorAll('.gallery-item');
+  let gIdx = 0;
+  const visibleCount = () => window.innerWidth < 600 ? 1 : 3;
+
+  function updateGallery() {
+    const itemW = track.parentElement.offsetWidth / visibleCount();
+    track.querySelectorAll('.gallery-item').forEach(el => {
+      el.style.flex = `0 0 ${itemW - 20}px`;
+    });
+    track.style.transform = `translateX(-${gIdx * (itemW)}px)`;
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    const max = items.length - visibleCount();
+    gIdx = gIdx >= max ? 0 : gIdx + 1;
+    updateGallery();
+  });
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    const max = items.length - visibleCount();
+    gIdx = gIdx <= 0 ? max : gIdx - 1;
+    updateGallery();
+  });
+  window.addEventListener('resize', updateGallery);
+  updateGallery();
+
+  /* ── Testimonials ── */
+  let tIdx = 0;
+  const testims = document.querySelectorAll('.testimonial');
+  const dots = document.querySelectorAll('.t-dot');
+
+  function goTestim(n) {
+    testims[tIdx].classList.remove('active');
+    dots[tIdx].classList.remove('active');
+    tIdx = n;
+    testims[tIdx].classList.add('active');
+    dots[tIdx].classList.add('active');
+  }
+  setInterval(() => goTestim((tIdx + 1) % testims.length), 5000);
+
+  /* ── Lightbox ── */
+  function openLightbox(src) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+
+  /* ── Forms ── */
+  function handleBooking() {
+    alert('Thank you for your enquiry! Our team will contact you within 24 hours.');
+  }
+  function handleNewsletter() {
+    alert('You\'re subscribed! Welcome to the Nestville community.');
+  }
+
+  /* ── Nav shadow on scroll ── */
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    nav.style.boxShadow = window.scrollY > 60 ? '0 4px 30px rgba(0,0,0,.1)' : 'none';
+  });
+
+  /* ── Scroll reveal ── */
+  const revealEls = document.querySelectorAll('.amenity-card, .process-step, .gallery-item, .stat, .contact-detail');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }, i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  revealEls.forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity .6s ease, transform .6s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
